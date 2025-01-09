@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  labels:
+    app: redis
+data:
+  redis.conf: |-
+    dir /data
+    port 6379
+    bind * -::*
+    appendonly yes
+    daemonize no
+    #protected-mode no
+    requirepass 123456
+    pidfile /srv/redis-6379.pid
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      nodeSelector:
+        groot-redis: "redis"
+      containers:
+        - name: redis
+          image: xxx:6.2.6
+          command:
+            - "sh"
+            - "-c"
+            - "redis-server /usr/local/redis/redis.conf"
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+            requests:
+              cpu: 1000m
+              memory: 1024Mi
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 300
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: config
+              mountPath:  /usr/local/redis/redis.conf
+              subPath: redis.conf
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: config
+          configMap:
+            name: redis-config
+        - name: data
+          hostPath:
+            path: /data00/redis
+            type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+
+spec:
+  ports:
+    - port: 6379
+      protocol: TCP
+      targetPort: 6379
+  selector:
+    app: redis

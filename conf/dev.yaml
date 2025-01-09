@@ -1,0 +1,39 @@
+---
+# server startup listening address
+web:
+  address: "127.0.0.1:8080"
+
+# transport protocol: http/https
+transport:
+  protocol: "http"
+
+# whether to enable dev mode: dev/prod
+log:
+  level: dev
+
+# redis
+redis:
+  address: x.x.x.x
+  port: 6379
+  password: 123456
+  database: 0
+
+# mysql
+mysql:
+  address: x.x.x.x
+  port: 3306
+  username: root
+  password: 123456
+  database: groot
+
+# notify
+notify:
+  larkWebhook: "xxxxxx"
+
+# ansible
+ansible:
+  authenticate: privateKey  # privateKey/kerberos
+  privateKeyFile: "/home/doubledna/.ssh/id_rsa"
+  user: root
+  becomeUser: root
+  dataDir: "../../data/"    # store playbook repo directory

@@ -1,0 +1,4 @@
+package: v1
+generate:
+  models: true
+output: ../../gen/v1/types.gen.go

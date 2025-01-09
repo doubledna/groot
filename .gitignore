@@ -1,0 +1,6 @@
+# project idea directory
+.idea
+
+# ansible playbook directory
+data/*
+!data/.gitkeep

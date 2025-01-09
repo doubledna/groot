@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      nodeSelector:
+        groot-mysql: "mysql"
+      containers:
+        # 指定现在使用的特定版本
+        - image: xxx:8.0_1.0.0.5
+          name: mysql
+          env:
+            # 设定root用户的账号密码
+            - name: MYSQL_ROOT_PASSWORD
+              value: "123456"
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+              # 增加探针
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 1
+            periodSeconds: 30
+            successThreshold: 2
+      volumes:
+        - name: mysql-persistent-storage
+          hostPath:
+            path: /data00/mysql
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  type: ClusterIP
+  ports:
+    - name: mysql-3306
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+  selector:
+    app: mysql

@@ -1,0 +1,394 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Groot
+  description:  Groot OpenAPI 3.0 specification
+  termsOfService: https://swagger.io/terms/
+  contact:
+    name: Swagger API Team
+    email: apiteam@swagger.io
+    url: https://swagger.io
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: https://127.0.0.1:8080/api/v1
+    description: "Development server"
+paths:
+  /api/v1/task_type:
+    get:
+      summary: Returns all task type
+      description: Returns all task type
+      operationId: getTaskType
+      responses:
+        '200':
+          description: task type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskType'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new task type
+      description: Create a new task type
+      operationId: createTaskType
+      requestBody:
+        description: task type to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTaskType'
+      responses:
+        '200':
+          description: task type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskType'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/task_type/{name}:
+    get:
+      summary: Returns a task type by name
+      description: Returns a task type by name
+      operationId: getTaskTypeByName
+      parameters:
+        - name: name
+          in: path
+          description: Name of task type to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: task type response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskType'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a task type by name
+      description: Delete a task type by name
+      operationId: deleteTaskType
+      parameters:
+        - name: name
+          in: path
+          description: Name of task type to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: task type deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskType'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/task:
+    get:
+      summary: Returns all task
+      description: Returns all task
+      operationId: getTask
+      responses:
+        '200':
+          description: task response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a new task
+      description: Create a new task
+      operationId: createTask
+      requestBody:
+        description: task to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTask'
+      responses:
+        '200':
+          description: task response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Create a new task
+      description: Create a new task
+      operationId: updateTask
+      requestBody:
+        description: task to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewTask'
+      responses:
+        '200':
+          description: task response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/task/{name}:
+    get:
+      summary: Returns a task by name
+      description: Returns a task by name
+      operationId: getTaskByName
+      parameters:
+        - name: name
+          in: path
+          description: Name of task to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: task response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a task by name
+      description: Delete a task by name
+      operationId: deleteTask
+      parameters:
+        - name: name
+          in: path
+          description: Name of task to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: task deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/task/mode/{mode}:
+    get:
+      summary: Returns a task by mode
+      description: Returns a task by mode
+      operationId: getTaskByMode
+      parameters:
+        - name: mode
+          in: path
+          description: mode of task to fetch
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: task response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTask'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    ResponseFormat:
+      type: object
+      required:
+        - code
+        - message
+        - reference
+        - error
+      properties:
+        code:
+          type: integer
+          format: int64
+          description: response code
+        message:
+          type: string
+          description: response message
+        reference:
+          type: string
+          description: give how to handle the response or error url externally
+        error:
+          type: string
+          description: error information
+
+    NewTaskType:
+      type: object
+      required:
+        - kind
+        - name
+      properties:
+        kind:
+          type: string
+          description: mark the resource type as task type
+        name:
+          type: string
+          description: task type name
+
+    TaskType:
+      allOf:
+        - $ref: '#/components/schemas/NewTaskType'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: Unique id of the task type
+
+    GetTaskType:
+      allOf:
+        - $ref: '#/components/schemas/ResponseFormat'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              description: return data list
+              items:
+                $ref: '#/components/schemas/TaskType'
+
+    NewTask:
+      type: object
+      required:
+        - kind
+        - taskType
+        - name
+        - mode
+        - cronSpec
+        - payload
+        - result
+        - event
+        - createAt
+        - updateAt
+      properties:
+        kind:
+          type: string
+          description: mark the resource type as task
+        taskType:
+          type: string
+          description:  the task type to which the task belongs
+        name:
+          type: string
+          description: task name
+        mode:
+          type: string
+          description: task mode (once or periodic)
+        cronSpec:
+          type: string
+          description: cron spec, for example * * * * * or 30s
+        payload:
+          type: string
+          description: parameters required when running a task
+        result:
+          type: boolean
+          description: whether the task was successfully executed
+        event:
+          type: string
+          description: store task execution results
+        createAt:
+          type: string
+          description: task create time
+        updateAt:
+          type: string
+          description: task update time
+
+    Task:
+      allOf:
+        - $ref: '#/components/schemas/NewTask'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: Unique id of the task
+
+    GetTask:
+      allOf:
+        - $ref: '#/components/schemas/ResponseFormat'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              description: return data list
+              items:
+                $ref: '#/components/schemas/Task'
+
+    Error:
+      allOf:
+        - $ref: '#/components/schemas/ResponseFormat'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: integer
+              format: int64
+              description: return error id (default is -1)

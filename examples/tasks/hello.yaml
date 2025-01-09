@@ -1,0 +1,41 @@
+# once task
+---
+kind: task
+taskType: hello
+name: demo1
+mode: once
+cronSpec: "3"  # execute after three seconds
+payload: """
+  userID: 1
+  name: "groot"
+
+# periodic task
+---
+kind: task
+taskType: hello
+name: demo2
+mode: periodic
+cronSpec: "3s"  # Execute every three seconds
+payload:
+  userID: 1
+  name: "groot"
+
+---
+kind: task
+taskType: hello
+name: demo3
+mode: periodic
+cronSpec: "3m"  # Execute every three minutes
+payload:
+  userID: 1
+  name: "groot"
+
+---
+kind: task
+taskType: hello
+name: demo3
+mode: periodic
+cronSpec: "3h"  # Execute every three hours
+payload:
+  userID: 1
+  name: "groot"
