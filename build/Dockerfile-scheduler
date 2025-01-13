@@ -1,14 +1,14 @@
 FROM go1.22.4 AS builder
 WORKDIR /opt/
 RUN rm -rf /opt/groot/
-RUN git clone -b main xxx
+RUN git clone -b main git@github.com:doubledna/groot.git
 WORKDIR /opt/groot/cmd/scheduler/
-RUN go build -o groot main.go
+RUN go build -o scheduler scheduler.go
 
 FROM debian AS prod
 ARG CONF_ENV
 ENV CONF_ENV=prod
 WORKDIR /opt/
 RUN rm -rf /opt/groot/
-COPY --from=builder /opt/groot/cmd/scheduler/groot .
-CMD ["./groot"]
+COPY --from=builder /opt/groot/cmd/scheduler/scheduler .
+CMD ["./scheduler"]

@@ -4,3 +4,4 @@
 # ansible playbook directory
 data/*
 !data/.gitkeep
+conf/dev.yaml

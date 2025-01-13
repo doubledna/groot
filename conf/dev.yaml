@@ -13,17 +13,17 @@ log:
 
 # redis
 redis:
-  address: x.x.x.x
+  address: 62.234.14.222
   port: 6379
-  password: 123456
+  password: xj2023
   database: 0
 
 # mysql
 mysql:
-  address: x.x.x.x
+  address: 62.234.14.222
   port: 3306
   username: root
-  password: 123456
+  password: cgl135246
   database: groot
 
 # notify

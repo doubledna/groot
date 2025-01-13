@@ -1,4 +1,4 @@
-package internal
+package cmd
 
 import (
 	"encoding/json"
@@ -9,9 +9,30 @@ import (
 	"net/http"
 	"os"
 	"text/tabwriter"
+	"github.com/spf13/cobra"
 )
 
-func ListTask(serverAddress string) {
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get a task",
+	Long:  `Get task list or a task`,
+	Run: func(cmd *cobra.Command, args []string) {
+	  listTask("x")
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(getCmd)
+}
+
+type ListResponse struct {
+	Code    int          `json:"code"`
+	Data    []tasks.Task `json:"data"`
+	Error   string       `json:"error"`
+	Message string       `json:"message"`
+}
+
+func listTask(serverAddress string) {
 	url := serverAddress + "/api/v1/task"
 	client := &http.Client{}
 

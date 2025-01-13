@@ -1,11 +1,25 @@
-package internal
+package cmd
 
 import (
 	"groot/internal/zlog"
 	"net/http"
+	"github.com/spf13/cobra"
 )
 
-func DeleteTask(serverAddress string, taskName string) {
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a task",
+	Long:  `Delete a task from the command line or from a file`,
+	Run: func(cmd *cobra.Command, args []string) {
+	  deleteTask("x", "y")
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(deleteCmd)
+}
+
+func deleteTask(serverAddress string, taskName string) {
 	url := serverAddress + "/api/v1/task/" + taskName
 
 	req, err := http.NewRequest("DELETE", url, nil)
