@@ -3,8 +3,6 @@
 
 基于开源项目 [asynq](https://github.com/hibiken/asynq) 二次封装
 
-* https://github.com/docker-library/golang
-
 ### 新增功能
 * 命令行工具：[gctl](./internal/gctl/README.md)
 * 实现 mysql 存储任务

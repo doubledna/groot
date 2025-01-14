@@ -15,6 +15,32 @@ servers:
   - url: https://127.0.0.1:8080/api/v1
     description: "Development server"
 paths:
+  /api/v1/register:
+    post:
+      summary: Register user
+      description: Register user
+      operationId: createUser
+      requestBody:
+        description: create user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUser'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /api/v1/task_type:
     get:
       summary: Returns all task type
@@ -273,6 +299,46 @@ components:
           type: string
           description: error information
 
+    CreateUser:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: username
+        password:
+          type: string
+          description: password
+    
+    User:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique id of the user
+        username:
+          type: string
+          description: username
+    
+    GetUser:
+      allOf:
+        - $ref: '#/components/schemas/ResponseFormat'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              description: return data list
+              items:
+                $ref: '#/components/schemas/User'
+      
     NewTaskType:
       type: object
       required:
