@@ -16,9 +16,9 @@ func NewTaskStore() *TaskStore {
 	return &TaskStore{}
 }
 
-// taskError wraps sending of an error in the Error format, and
+// Error wraps sending of an error in the Error format, and
 // handling the failure to marshal that.
-func taskError(c *gin.Context, response response.Response) {
+func ErrorFormat(c *gin.Context, response response.Response) {
 	taskErr := genv1.Error{
 		Code:      int64(response.Code),
 		Message:   response.Message,
@@ -53,7 +53,7 @@ func (t *TaskStore) CreateTaskType(c *gin.Context) {
 	var newTaskType genv1.NewTaskType
 	err := c.Bind(&newTaskType)
 	if err != nil {
-		taskError(c, response.CodeTaskTypeCreatePostDataFormatError.WithError(err))
+		ErrorFormat(c, response.CodeTaskTypeCreatePostDataFormatError.WithError(err))
 		return
 	}
 	var taskType tasks.TaskType
@@ -62,13 +62,13 @@ func (t *TaskStore) CreateTaskType(c *gin.Context) {
 	if taskType.Kind == "task_type" && taskType.Name != "" {
 		result, err := taskrepo.CreateTaskType(taskType)
 		if err != nil {
-			taskError(c, response.CodeTaskTypeCreateFailed.WithError(err))
+			ErrorFormat(c, response.CodeTaskTypeCreateFailed.WithError(err))
 			return
 		}
 		getTaskType(c, result, *response.CodeSuccess)
 		return
 	} else {
-		taskError(c, *response.CodeTaskTypeCreatePostDataIsNull)
+		ErrorFormat(c, *response.CodeTaskTypeCreatePostDataIsNull)
 		return
 	}
 }
@@ -76,11 +76,11 @@ func (t *TaskStore) CreateTaskType(c *gin.Context) {
 func (t *TaskStore) GetTaskType(c *gin.Context) {
 	result, err := taskrepo.ListTaskType()
 	if err != nil {
-		taskError(c, response.CodeTaskTypeQueryFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskTypeQueryFailed.WithError(err))
 		return
 	}
 	if len(result) == 0 {
-		taskError(c, *response.CodeTaskTypeQueryDataIsNull)
+		ErrorFormat(c, *response.CodeTaskTypeQueryDataIsNull)
 		return
 	}
 	getTaskType(c, result, *response.CodeSuccess)
@@ -89,11 +89,11 @@ func (t *TaskStore) GetTaskType(c *gin.Context) {
 func (t *TaskStore) GetTaskTypeByName(c *gin.Context, name string) {
 	result, err := taskrepo.GetTaskType(name)
 	if err != nil {
-		taskError(c, response.CodeTaskTypeQueryFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskTypeQueryFailed.WithError(err))
 		return
 	}
 	if len(result) == 0 {
-		taskError(c, response.CodeTaskTypeQueryDataIsNull.WithError(err))
+		ErrorFormat(c, response.CodeTaskTypeQueryDataIsNull.WithError(err))
 		return
 	}
 	getTaskType(c, result, *response.CodeSuccess)
@@ -102,7 +102,7 @@ func (t *TaskStore) GetTaskTypeByName(c *gin.Context, name string) {
 func (t *TaskStore) DeleteTaskType(c *gin.Context, name string) {
 	result, err := taskrepo.DeleteTaskType(name)
 	if err != nil {
-		taskError(c, response.CodeTaskTypeDeleteFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskTypeDeleteFailed.WithError(err))
 		return
 	}
 	getTaskType(c, result, *response.CodeSuccess)

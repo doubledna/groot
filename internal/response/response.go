@@ -104,4 +104,12 @@ var (
 	CodeTasKUpdateFailed              = NewResponse(20001014, "update task failed", "")
 	CodeTaskUpdatePutDataIsNull       = NewResponse(20001015, "update task failed，the request parameter is incorrect or empty", "")
 	CodeTaskDeleteFailed              = NewResponse(20001016, "delete task failed", "")
+
+	// user code
+	CodeUserCreatePostDataFormatError = NewResponse(40001017, "add user failed，the request parameter format error", "")
+	CodeUserCreateFailed              = NewResponse(20001018, "add user failed", "")
+	CodeUserCreatePostDataIsNull      = NewResponse(20001019, "add user failed，the request parameter is incorrect or empty", "")
+
+	// login code
+	CodeLoginFailed = NewResponse(20001020, "login failed", "")
 )

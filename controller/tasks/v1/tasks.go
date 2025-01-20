@@ -1,13 +1,14 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	genv1 "groot/gen/v1"
 	"groot/internal/models/tasks"
 	taskrepo "groot/internal/repository/tasks"
 	"groot/internal/response"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func getTime(timeStr string) time.Time {
@@ -50,7 +51,7 @@ func (t *TaskStore) CreateTask(c *gin.Context) {
 	var newTask genv1.NewTask
 	err := c.Bind(&newTask)
 	if err != nil {
-		taskError(c, response.CodeTaskCreatePostDataFormatError.WithError(err))
+		ErrorFormat(c, response.CodeTaskCreatePostDataFormatError.WithError(err))
 		return
 	}
 	// check whether it is a valid task type
@@ -73,17 +74,17 @@ func (t *TaskStore) CreateTask(c *gin.Context) {
 			task.Payload != "" {
 			result, err := taskrepo.CreateTask(task)
 			if err != nil {
-				taskError(c, response.CodeTasKCreateFailed.WithError(err))
+				ErrorFormat(c, response.CodeTasKCreateFailed.WithError(err))
 				return
 			}
 			getTask(c, result, *response.CodeSuccess)
 			return
 		} else {
-			taskError(c, *response.CodeTaskCreatePostDataIsNull)
+			ErrorFormat(c, *response.CodeTaskCreatePostDataIsNull)
 			return
 		}
 	} else {
-		taskError(c, *response.CodeTaskCreateTaskTypeInvalid)
+		ErrorFormat(c, *response.CodeTaskCreateTaskTypeInvalid)
 		return
 	}
 }
@@ -92,14 +93,14 @@ func (t *TaskStore) UpdateTask(c *gin.Context) {
 	var updateTask genv1.NewTask
 	err := c.Bind(&updateTask)
 	if err != nil {
-		taskError(c, response.CodeTaskCreatePostDataFormatError.WithError(err))
+		ErrorFormat(c, response.CodeTaskCreatePostDataFormatError.WithError(err))
 		return
 	}
 	var task tasks.Task
 	taskType := updateTask.TaskType
 	check := CheckTaskTypeValid(taskType)
-	if check == false {
-		taskError(c, *response.CodeTaskCreateTaskTypeInvalid)
+	if !check {
+		ErrorFormat(c, *response.CodeTaskCreateTaskTypeInvalid)
 		return
 	}
 	task.Kind = updateTask.Kind
@@ -116,13 +117,13 @@ func (t *TaskStore) UpdateTask(c *gin.Context) {
 		task.Payload != "" {
 		result, err := taskrepo.UpdateTask(task)
 		if err != nil {
-			taskError(c, response.CodeTasKUpdateFailed.WithError(err))
+			ErrorFormat(c, response.CodeTasKUpdateFailed.WithError(err))
 			return
 		}
 		getTask(c, result, *response.CodeSuccess)
 		return
 	} else {
-		taskError(c, *response.CodeTaskUpdatePutDataIsNull)
+		ErrorFormat(c, *response.CodeTaskUpdatePutDataIsNull)
 		return
 	}
 }
@@ -130,7 +131,7 @@ func (t *TaskStore) UpdateTask(c *gin.Context) {
 func (t *TaskStore) GetTask(c *gin.Context) {
 	result, err := taskrepo.ListTask()
 	if err != nil {
-		taskError(c, response.CodeTaskQueryFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskQueryFailed.WithError(err))
 		return
 	}
 	getTask(c, result, *response.CodeSuccess)
@@ -139,11 +140,11 @@ func (t *TaskStore) GetTask(c *gin.Context) {
 func (t *TaskStore) GetTaskByName(c *gin.Context, name string) {
 	result, err := taskrepo.GetTask(name)
 	if err != nil {
-		taskError(c, response.CodeTaskQueryFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskQueryFailed.WithError(err))
 		return
 	}
 	if len(result) == 0 {
-		taskError(c, *response.CodeTaskQueryDataIsNull)
+		ErrorFormat(c, *response.CodeTaskQueryDataIsNull)
 		return
 	}
 	getTask(c, result, *response.CodeSuccess)
@@ -153,11 +154,11 @@ func (t *TaskStore) GetTaskByMode(c *gin.Context, name string) {
 	// todo: add check mode is it effective
 	result, err := taskrepo.GetTaskByMode(name)
 	if err != nil {
-		taskError(c, response.CodeTaskQueryFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskQueryFailed.WithError(err))
 		return
 	}
 	if len(result) == 0 {
-		taskError(c, *response.CodeTaskQueryDataIsNull)
+		ErrorFormat(c, *response.CodeTaskQueryDataIsNull)
 		return
 	}
 	getTask(c, result, *response.CodeSuccess)
@@ -166,7 +167,7 @@ func (t *TaskStore) GetTaskByMode(c *gin.Context, name string) {
 func (t *TaskStore) DeleteTask(c *gin.Context, name string) {
 	result, err := taskrepo.DeleteTask(name)
 	if err != nil {
-		taskError(c, response.CodeTaskDeleteFailed.WithError(err))
+		ErrorFormat(c, response.CodeTaskDeleteFailed.WithError(err))
 		return
 	}
 	getTask(c, result, *response.CodeSuccess)

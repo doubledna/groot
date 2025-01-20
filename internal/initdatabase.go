@@ -2,11 +2,12 @@ package internal
 
 import (
 	"fmt"
+	"groot/internal/apps"
+	"groot/internal/config"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"groot/internal/apps"
-	"groot/internal/config"
 )
 
 var DB *gorm.DB
@@ -56,5 +57,11 @@ func Init() error {
 	if err != nil {
 		return err
 	}
+
+	err = apps.MigrateUserTable(DB)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

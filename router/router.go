@@ -3,10 +3,6 @@ package router
 import (
 	"context"
 	"fmt"
-	ginzap "github.com/gin-contrib/zap"
-	"github.com/gin-gonic/gin"
-	middleware "github.com/oapi-codegen/gin-middleware"
-	"go.uber.org/zap"
 	tasksv1 "groot/controller/tasks/v1"
 	genv1 "groot/gen/v1"
 	"groot/internal"
@@ -14,6 +10,11 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	ginzap "github.com/gin-contrib/zap"
+	"github.com/gin-gonic/gin"
+	middleware "github.com/oapi-codegen/gin-middleware"
+	"go.uber.org/zap"
 )
 
 type HTTPServer struct {
@@ -44,7 +45,7 @@ func NewHTTPServer() (*HTTPServer, error) {
 	swagger.Servers = nil
 	r.Use(middleware.OapiRequestValidator(swagger))
 
-	// task route
+	// task routes
 	taskServer := tasksv1.NewTaskStore()
 	genv1.RegisterHandlers(r, taskServer)
 

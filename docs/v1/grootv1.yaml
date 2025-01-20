@@ -40,6 +40,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/v1/login:
+    post:
+      summary: Login user
+      description: Login user
+      operationId: loginUser
+      requestBody:
+        description: login user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetToken'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/v1/task_type:
     get:
@@ -338,6 +363,32 @@ components:
               description: return data list
               items:
                 $ref: '#/components/schemas/User'
+    
+    Token:
+      type: object
+      required:
+        - username
+        - token
+      properties:
+        username:
+          type: string
+          description: username
+        token:
+          type: string
+          description: token
+    
+    GetToken:
+      allOf:
+        - $ref: '#/components/schemas/ResponseFormat'
+        - type: object
+          required:
+            - data
+          properties:
+            data:
+              type: array
+              description: return data list
+              items:
+                $ref: '#/components/schemas/Token'
       
     NewTaskType:
       type: object

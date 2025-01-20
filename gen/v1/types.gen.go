@@ -66,6 +66,24 @@ type GetTaskType struct {
 	Reference string `json:"reference"`
 }
 
+// GetToken defines model for GetToken.
+type GetToken struct {
+	// Code response code
+	Code int64 `json:"code"`
+
+	// Data return data list
+	Data []Token `json:"data"`
+
+	// Error error information
+	Error string `json:"error"`
+
+	// Message response message
+	Message string `json:"message"`
+
+	// Reference give how to handle the response or error url externally
+	Reference string `json:"reference"`
+}
+
 // GetUser defines model for GetUser.
 type GetUser struct {
 	// Code response code
@@ -189,6 +207,15 @@ type TaskType struct {
 	Name string `json:"name"`
 }
 
+// Token defines model for Token.
+type Token struct {
+	// Token token
+	Token string `json:"token"`
+
+	// Username username
+	Username string `json:"username"`
+}
+
 // User defines model for User.
 type User struct {
 	// Id Unique id of the user
@@ -197,6 +224,9 @@ type User struct {
 	// Username username
 	Username string `json:"username"`
 }
+
+// LoginUserJSONRequestBody defines body for LoginUser for application/json ContentType.
+type LoginUserJSONRequestBody = CreateUser
 
 // CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
 type CreateUserJSONRequestBody = CreateUser
