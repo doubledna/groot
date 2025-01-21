@@ -1,14 +1,15 @@
 package v1
 
 import (
-	"go/token"
 	genv1 "groot/gen/v1"
+	"groot/internal"
 	"groot/internal/models/user"
 	"groot/internal/response"
-
+	"groot/internal/token"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"fmt"
 )
 
 type ReqLogin struct {
@@ -34,14 +35,44 @@ func (t *TaskStore) LoginUser(c *gin.Context) {
 		return
 	}
 
-	SuccessFormat(c, *response.CodeSuccess, token)
+	tokens := []genv1.Token{
+		{
+			Token:    token,
+			Username: u.Username,
+		},
+	}
+
+	SuccessFormat(c, tokens, *response.CodeSuccess)
 }
 
 func LoginCheck(username string, password string) (string, error) {
-	return "token", nil
+	u := user.User{}
+	var err error
+	err = internal.DB.Model(&user.User{}).Where("username = ?", username).Take(&u).Error
+	if err != nil {
+		return "", err
+	}
+
+	err = VerifyPassword(password, u.Password)
+	if err != nil {
+		return "", err
+	}
+
+	token, err := token.GenerateToken(u.ID)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
 }
 
-func SuccessFormat(c *gin.Context, tokens []token.Token, response response.Response, data interface{}) {
+func VerifyPassword(password string, userPassword string) error {
+	if password != userPassword {
+		return fmt.Errorf("invalid password")
+	}
+	return nil
+}
+
+func SuccessFormat(c *gin.Context, tokens []genv1.Token, response response.Response) {
 	result := make([]genv1.Token, 0, len(tokens))
 	for _, value := range tokens {
 		result = append(result, genv1.Token{
