@@ -7,6 +7,7 @@ import (
 	genv1 "groot/gen/v1"
 	"groot/internal"
 	"groot/internal/config"
+	custommiddleware "groot/middleware"
 	"net/http"
 	"os"
 	"time"
@@ -34,7 +35,10 @@ func NewHTTPServer() (*HTTPServer, error) {
 	}
 
 	healthCheck := r.Group("/healthz")
-	healthCheckRegister(healthCheck)
+	{
+		healthCheck.Use(custommiddleware.JwtAuthMiddleware())
+		healthCheckRegister(healthCheck)
+	}
 
 	// openapi
 	swagger, err := genv1.GetSwagger()
