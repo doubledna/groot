@@ -8,8 +8,9 @@ import (
 	"groot/internal/token"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"fmt"
+
+	"github.com/gin-gonic/gin"
 )
 
 type ReqLogin struct {

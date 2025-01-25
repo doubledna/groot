@@ -7,11 +7,13 @@ import (
 	genv1 "groot/gen/v1"
 	"groot/internal"
 	"groot/internal/config"
-	custommiddleware "groot/middleware"
+	"strings"
+
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/getkin/kin-openapi/openapi3filter"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	middleware "github.com/oapi-codegen/gin-middleware"
@@ -35,10 +37,11 @@ func NewHTTPServer() (*HTTPServer, error) {
 	}
 
 	healthCheck := r.Group("/healthz")
-	{
-		healthCheck.Use(custommiddleware.JwtAuthMiddleware())
-		healthCheckRegister(healthCheck)
-	}
+	healthCheckRegister(healthCheck)
+	// {
+	// 	healthCheck.Use(custommiddleware.JwtAuthMiddleware())
+	// 	healthCheckRegister(healthCheck)
+	// }
 
 	// openapi
 	swagger, err := genv1.GetSwagger()
@@ -47,7 +50,20 @@ func NewHTTPServer() (*HTTPServer, error) {
 		os.Exit(1)
 	}
 	swagger.Servers = nil
-	r.Use(middleware.OapiRequestValidator(swagger))
+
+	// Add security handler
+	opts := middleware.Options{
+		Options: openapi3filter.Options{
+			AuthenticationFunc: func(c context.Context, input *openapi3filter.AuthenticationInput) error {
+				token := input.RequestValidationInput.Request.Header.Get("Authorization")
+				if len(strings.Split(token, " ")) == 2 {
+					token = strings.Split(token, " ")[1]
+				}
+				return tasksv1.VerifyJWTToken(token)
+			},
+		},
+	}
+	r.Use(middleware.OapiRequestValidatorWithOptions(swagger, &opts))
 
 	// task routes
 	taskServer := tasksv1.NewTaskStore()

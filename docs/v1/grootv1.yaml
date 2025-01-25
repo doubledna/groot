@@ -12,10 +12,12 @@ info:
     name: MIT
     url: https://opensource.org/license/mit
 servers:
+  - url: https://127.0.0.1:8080/api
+    description: "The production Version Public API Server"
   - url: https://127.0.0.1:8080/api/v1
-    description: "Development server"
+    description: "The production V1 API Server"
 paths:
-  /api/v1/register:
+  /api/register:
     post:
       summary: Register user
       description: Register user
@@ -40,7 +42,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /api/v1/login:
+  /api/login:
     post:
       summary: Login user
       description: Login user
@@ -69,6 +71,8 @@ paths:
   /api/v1/task_type:
     get:
       summary: Returns all task type
+      security:
+        - bearerAuth: []
       description: Returns all task type
       operationId: getTaskType
       responses:
@@ -86,6 +90,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       summary: Create a new task type
+      security:
+        - bearerAuth: []
       description: Create a new task type
       operationId: createTaskType
       requestBody:
@@ -112,6 +118,8 @@ paths:
   /api/v1/task_type/{name}:
     get:
       summary: Returns a task type by name
+      security:
+        - bearerAuth: []
       description: Returns a task type by name
       operationId: getTaskTypeByName
       parameters:
@@ -136,6 +144,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       summary: Delete a task type by name
+      security:
+        - bearerAuth: []
       description: Delete a task type by name
       operationId: deleteTaskType
       parameters:
@@ -162,6 +172,8 @@ paths:
   /api/v1/task:
     get:
       summary: Returns all task
+      security:
+        - bearerAuth: []
       description: Returns all task
       operationId: getTask
       responses:
@@ -179,6 +191,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     post:
       summary: Create a new task
+      security:
+        - bearerAuth: []
       description: Create a new task
       operationId: createTask
       requestBody:
@@ -203,6 +217,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     put:
       summary: Create a new task
+      security:
+        - bearerAuth: []
       description: Create a new task
       operationId: updateTask
       requestBody:
@@ -228,6 +244,8 @@ paths:
   /api/v1/task/{name}:
     get:
       summary: Returns a task by name
+      security:
+        - bearerAuth: []
       description: Returns a task by name
       operationId: getTaskByName
       parameters:
@@ -252,6 +270,8 @@ paths:
                 $ref: '#/components/schemas/Error'
     delete:
       summary: Delete a task by name
+      security:
+        - bearerAuth: []
       description: Delete a task by name
       operationId: deleteTask
       parameters:
@@ -277,6 +297,8 @@ paths:
   /api/v1/task/mode/{mode}:
     get:
       summary: Returns a task by mode
+      security:
+        - bearerAuth: []
       description: Returns a task by mode
       operationId: getTaskByMode
       parameters:
@@ -301,6 +323,11 @@ paths:
                 $ref: '#/components/schemas/Error'
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     ResponseFormat:
       type: object
