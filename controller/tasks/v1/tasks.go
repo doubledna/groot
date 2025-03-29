@@ -49,44 +49,43 @@ func getTask(c *gin.Context, task []tasks.Task, response response.Response) {
 
 func (t *TaskStore) CreateTask(c *gin.Context) {
 	var newTask genv1.NewTask
-	err := c.Bind(&newTask)
-	if err != nil {
+	if err := c.Bind(&newTask); err != nil {
 		ErrorFormat(c, response.CodeTaskCreatePostDataFormatError.WithError(err))
 		return
 	}
-	// check whether it is a valid task type
-	var task tasks.Task
+
 	taskType := newTask.TaskType
-	check := CheckTaskTypeValid(taskType)
-	if check {
-		// todo: need check some key is it effective
-		task.Kind = newTask.Kind
-		task.TaskType = taskType
-		task.Name = newTask.Name
-		task.Mode = newTask.Mode
-		task.CronSpec = newTask.CronSpec
-		task.Payload = newTask.Payload
-		task.Result = newTask.Result
-		task.Event = newTask.Event
-		task.CreatedAt = getTime(newTask.CreateAt)
-		task.UpdatedAt = getTime(newTask.UpdateAt)
-		if task.Kind == "task" && task.Name != "" && task.Mode != "" && task.CronSpec != "" &&
-			task.Payload != "" {
-			result, err := taskrepo.CreateTask(task)
-			if err != nil {
-				ErrorFormat(c, response.CodeTasKCreateFailed.WithError(err))
-				return
-			}
-			getTask(c, result, *response.CodeSuccess)
-			return
-		} else {
-			ErrorFormat(c, *response.CodeTaskCreatePostDataIsNull)
-			return
-		}
-	} else {
+	if !CheckTaskTypeValid(taskType) {
 		ErrorFormat(c, *response.CodeTaskCreateTaskTypeInvalid)
 		return
 	}
+
+	task := tasks.Task{
+		Kind:      newTask.Kind,
+		TaskType:  taskType,
+		Name:      newTask.Name,
+		Mode:      newTask.Mode,
+		CronSpec:  newTask.CronSpec,
+		Payload:   newTask.Payload,
+		Result:    newTask.Result,
+		Event:     newTask.Event,
+		CreatedAt: getTime(newTask.CreateAt),
+		UpdatedAt: getTime(newTask.UpdateAt),
+	}
+
+	if task.Kind != "task" || task.Name == "" || task.Mode == "" || 
+	   task.CronSpec == "" || task.Payload == "" {
+		ErrorFormat(c, *response.CodeTaskCreatePostDataIsNull)
+		return
+	}
+
+	result, err := taskrepo.CreateTask(task)
+	if err != nil {
+		ErrorFormat(c, response.CodeTasKCreateFailed.WithError(err))
+		return
+	}
+
+	getTask(c, result, *response.CodeSuccess)
 }
 
 func (t *TaskStore) UpdateTask(c *gin.Context) {
